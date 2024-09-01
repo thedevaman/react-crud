@@ -3,9 +3,53 @@ import {useState} from 'react'
 import './App.css'
 const App = ()=>{
   const[right,setRight]=useState(-450)
+  const[student,setStudent] = useState([])
+  const[form,setForm]=useState({
+    fullname:'',
+    class:'',
+    roll:'',
+    subject:'',
+    dob:'',
+
+  }) 
   const handleDrawer = ()=>
   {
    setRight(0)
+  }
+  const handleInput =(e)=>{
+    const input = e.target
+    const value = input.value
+    const key = input.name
+    setForm({
+      ...form,
+      [key]:value
+    })
+
+  }
+
+  const createStudent= (e)=>{
+    e.preventDefault()
+    console.log(form)
+   setStudent([
+    ...student,
+    form
+   ])
+   setForm({
+    
+      fullname:'',
+      class:'',
+      roll:'',
+      subject:'',
+      dob:'',
+   })
+   setRight(-450)
+  }
+
+  const deleteStudent=(index)=>{
+const backup = [...student]
+backup.splice(index,1)
+setStudent(backup)
+
   }
 
   return(
@@ -51,13 +95,15 @@ const App = ()=>{
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td>1</td>
-              <td>Aman</td>
-              <td>12</td>
-              <td>10</td>
-              <td>25/08/1998</td>
-              <td>C.S.</td>
+            {
+             student.map((item,index)=>(
+ <tr>
+              <td>{index+1}</td>
+              <td>{item.fullname}</td>
+              <td>{item.class}</td>
+              <td>{item.roll}</td>
+              <td>{item.dob}</td>
+              <td>{item.subject}</td>
               <td>
                 <div>
                   <button style={{
@@ -69,7 +115,9 @@ const App = ()=>{
                     background:'#07c65d',
                     marginRight:12
                   }}><i className="ri-pencil-line"></i></button>
-                    <button style={{
+                    <button 
+                    onClick={()=>deleteStudent(index)}
+                    style={{
                     border:'none',
                     color:'white',
                     borderRadius:4,
@@ -81,6 +129,12 @@ const App = ()=>{
                 
               </td>
             </tr>
+
+             ))
+
+
+            }
+           
           
           </tbody>
         </table>
@@ -112,13 +166,18 @@ const App = ()=>{
           top:20,
           right:20
         }}><i className="ri-close-circle-fill"></i></button>
-        <h1>My Drawer</h1>
-        <form style={{
+        <h1>New Student</h1>
+       
+        <form 
+        onSubmit={createStudent}
+        style={{
           display:'flex',
           flexDirection:'column',
           gap:24
         }}>
           <input
+          value={form.fullname}
+          onChange={handleInput}
           name="fullname"
           type="text"
           placeholder="Enter Your Full Name"
@@ -130,7 +189,9 @@ const App = ()=>{
           }}
           />
           <input
-          name="Class"
+          value={form.class}
+           onChange={handleInput}
+          name="class"
           type="number"
           placeholder="Enter Your Class"
           required
@@ -141,6 +202,8 @@ const App = ()=>{
           }}
           />
           <input
+          value={form.roll}
+           onChange={handleInput}
           name="roll"
           type="number"
           placeholder="Enter Your Roll No."
@@ -152,6 +215,8 @@ const App = ()=>{
           }}
           />
           <input
+          value={form.subject}
+           onChange={handleInput}
           name="subject"
           type="text"
           placeholder="Enter Your Subject"
@@ -163,6 +228,8 @@ const App = ()=>{
           }}
           />
           <input
+           onChange={handleInput}
+           value={form.dob}
           name="dob"
           type="date"
           required
