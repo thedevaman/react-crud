@@ -2,16 +2,17 @@ import 'remixicon/fonts/remixicon.css'
 import {useState} from 'react'
 import './App.css'
 const App = ()=>{
-  const[right,setRight]=useState(-450)
-  const[student,setStudent] = useState([])
-  const[form,setForm]=useState({
+  const model ={
     fullname:'',
     class:'',
     roll:'',
     subject:'',
     dob:'',
-
-  }) 
+ }
+  const[right,setRight]=useState(-450)
+  const[student,setStudent] = useState([])
+  const[editIndex,setEditIndex] = useState(null)
+  const[form,setForm]=useState(model) 
   const handleDrawer = ()=>
   {
    setRight(0)
@@ -34,14 +35,7 @@ const App = ()=>{
     ...student,
     form
    ])
-   setForm({
-    
-      fullname:'',
-      class:'',
-      roll:'',
-      subject:'',
-      dob:'',
-   })
+   setForm(model)
    setRight(-450)
   }
 
@@ -50,6 +44,27 @@ const backup = [...student]
 backup.splice(index,1)
 setStudent(backup)
 
+  }
+
+  const editStudent = (index)=>{
+    setRight(0)
+    setForm(student[index])
+    setEditIndex(index)
+  }
+
+  const saveStudent= (e)=>{
+    e.preventDefault()
+    const backupedit = [...student]
+    backupedit[editIndex] = form
+    setStudent(backupedit)
+    setForm(model)
+    setEditIndex(null)
+    setRight(-450)
+  }
+  const closeDrawer= ()=>{
+    setRight(-450)
+    setEditIndex(null)
+    setForm(model)
   }
 
   return(
@@ -80,7 +95,7 @@ setStudent(backup)
         margin:'24px 0'
       }}>
         <i className="ri-user-add-line" style={{marginRight:8}}></i>
-        New Student</button>
+       New Student</button>
         
         <table className='crud-app'>
           <thead>
@@ -106,7 +121,9 @@ setStudent(backup)
               <td>{item.subject}</td>
               <td>
                 <div>
-                  <button style={{
+                  <button 
+                  onClick={()=>editStudent(index)}
+                  style={{
                     border:'none',
                     color:'white',
                     borderRadius:4,
@@ -156,7 +173,7 @@ setStudent(backup)
         transition:'0.3s'
       }}>
         <button 
-        onClick={()=>setRight(-450)}
+        onClick={closeDrawer}
         style={{
           border:'none',
           background:'transparent',
@@ -166,10 +183,10 @@ setStudent(backup)
           top:20,
           right:20
         }}><i className="ri-close-circle-fill"></i></button>
-        <h1>New Student</h1>
+        <h1> {editIndex===null?'New Student':'Edit Student'}</h1>
        
         <form 
-        onSubmit={createStudent}
+        onSubmit={editIndex===null?createStudent:saveStudent}
         style={{
           display:'flex',
           flexDirection:'column',
@@ -239,6 +256,9 @@ setStudent(backup)
             borderRadius:4
           }}
           />
+          {
+            editIndex===null?
+        
           <button
           style={{
             border:'none',
@@ -249,6 +269,18 @@ setStudent(backup)
             color:'#fff'
           }}
           >Submit</button>
+           :
+          <button
+          style={{
+            border:'none',
+            fontSize:16,
+            background:'deeppink',
+            borderRadius:4,
+            padding:'14px 0px',
+            color:'#fff'
+          }}
+          >Save</button>
+        }
         </form>
       </aside>
 
